@@ -54,22 +54,9 @@ def logged_in():
         elif option == 0:
             exit_account()
 
-    
-    
-def card_creation():
-    iin = str(400000)
-    num = random.randrange(1, 10**9)
-    account_number = str(num).zfill(9)
-    checksum = str(random.randint(0, 9))
-    card_number = str(int(iin + account_number + checksum))
-    card_list.append(card_number)   
-    pin = random.randrange(1, 10**4)
-    pin_number = str(pin).zfill(4) 
-    pin_list.append(pin_number)
-    print(card_number)   
-    print("Your card PIN:")
-    print(pin_number)
-
+def sum_nums_of_str(str):
+    final_sum = sum(int(digit) for digit in str)
+    return final_sum  #type = int
 
 def check_luhn(card: str):
     checksum = int(card[15])  # to access card last digit easily
@@ -89,27 +76,50 @@ def check_luhn(card: str):
             if int(val) >= 10:
                 test_card[int(idx)] = str(int(val) - 9)
         card_without_checksum = ''.join(test_card)
-        final_sum = sum_nums_of_str(card_without_checksum) + checksum
-        if final_sum % 10 == 0:
-            print("Tarjeta valida! --> " + str(final_sum))
-        elif final_sum % 10 != 0:
-            print("Tarjeta no valida :( " + str(final_sum))
+        final_num = sum_nums_of_str(card_without_checksum) + checksum
+        if final_num % 10 == 0:
+            #validity_message = f"Tarjeta valida! --> {final_num}"
+            return True
+        elif final_num % 10 != 0:
+            #validity_message = f"Tarjeta no valida :( {final_num}"
+            return False
 
+def card_creation():
+    card_validity = False
+    while card_validity == False:
+        try:
+            # pin creation
+            pin = random.randrange(1, 10**4)
+            pin_number = str(pin).zfill(4) 
+            pin_list.append(pin_number)
+            # card creation
+            iin = str(400000)
+            num = random.randrange(1, 10**9)
+            account_number = str(num).zfill(9)
+            checksum = str(random.randint(0, 9))
+            card_number = str(int(iin + account_number + checksum))
+            if check_luhn(card_number):
+                card_list.append(card_number)   
+                card_validity = True  
+            elif not check_luhn(card_number):
+                pass
+        except:
+            pass
     
-def create_account():
-    print("Your card has been created")
-    print("Your card number:")
-    card_creation()
+    if card_validity:
+        print("Your card has been created")
+        print(card_number)   
+        print("Your card PIN:")
+        print(pin_number)
 
 while bank_status:
     main_menu()
     choice = int(input())
     if choice == 1:
-        create_account()
+        card_creation()
     elif choice == 2:
         logging_menu()
         if valid_log:
             logged_in()
     elif choice == 0:
         exit_account()
-
