@@ -69,7 +69,32 @@ def card_creation():
     print(card_number)   
     print("Your card PIN:")
     print(pin_number)
-    
+
+
+def check_luhn(card: str):
+    checksum = int(card[15])  # to access card last digit easily
+    test_card = []
+
+    if len(card) == 16:
+        # step 3
+        start = 0
+        for i in card[:15]:
+            if start % 2 == 0:
+                test_card.append(str(int(i)*2))
+            if start % 2 != 0:
+                test_card.append(str(i))
+            start += 1
+        # step 4
+        for idx, val in enumerate(test_card):
+            if int(val) >= 10:
+                test_card[int(idx)] = str(int(val) - 9)
+        card_without_checksum = ''.join(test_card)
+        final_sum = sum_nums_of_str(card_without_checksum) + checksum
+        if final_sum % 10 == 0:
+            print("Tarjeta valida! --> " + str(final_sum))
+        elif final_sum % 10 != 0:
+            print("Tarjeta no valida :( " + str(final_sum))
+
     
 def create_account():
     print("Your card has been created")
